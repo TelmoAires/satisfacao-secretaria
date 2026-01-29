@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Área de Administração</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f0f0f0;
+        }
+
+        tr:nth-child(even) {
+            background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+
+<h1>📊 Histórico de Satisfação</h1>
+
+<table>
+    <tr>
+        <th>Satisfação</th>
+        <th>Data e Hora</th>
+    </tr>
+
+    {% for nivel, data_hora in dados %}
+    <tr>
+        <td>{{ nivel }}</td>
+        <td>{{ data_hora }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+</body>
+</html>
