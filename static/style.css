@@ -1,0 +1,33 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding: 20px;
+}
+
+h1 {
+    font-size: 2rem;
+}
+
+.botoes {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 40px;
+}
+
+button {
+    font-size: 1.5rem;
+    padding: 20px;
+    border-radius: 15px;
+    border: none;
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .botoes {
+        flex-direction: column;
+    }
+    button {
+        width: 100%;
+    }
+}
