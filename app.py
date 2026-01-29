@@ -45,19 +45,27 @@ def exportar_txt():
     df.to_csv("cliques.txt", sep="\t", index=False)
     return send_file("cliques.txt", as_attachment=True)
 
+
 @app.route("/admin")
     def admin():
     conn = sqlite3.connect("satisfacao.db")
     cursor = conn.cursor()
-    cursor.execute("SELECT nivel, data_hora FROM respostas ORDER BY data_hora DESC")
+    cursor.execute("""
+        SELECT nivel, data_hora
+        FROM respostas
+        ORDER BY data_hora DESC
+    """)
     dados = cursor.fetchall()
     conn.close()
+
     return render_template("admin.html", dados=dados)
+
 
 
 # Início da aplicação
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
+
 
 
