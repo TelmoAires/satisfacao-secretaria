@@ -1,20 +1,4 @@
-from flask import Flask, render_template, request, jsonify, send_file
-import sqlite3
-from datetime import datetime
-import pandas as pd
-import os
-
-app = Flask(__name__)
-
-# Função para ligar à base de dados SQLite
-def ligar_bd():
-    conn = sqlite3.connect("satisfacao.db")
-    cursor = conn.cursor()
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS respostas (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            nivel TEXT,
-            data_hora TEXT
+EXT
         )
     """)
     conn.commit()
@@ -61,8 +45,19 @@ def exportar_txt():
     df.to_csv("cliques.txt", sep="\t", index=False)
     return send_file("cliques.txt", as_attachment=True)
 
+@app.route("/admin")
+    def admin():
+    conn = sqlite3.connect("satisfacao.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT nivel, data_hora FROM respostas ORDER BY data_hora DESC")
+    dados = cursor.fetchall()
+    conn.close()
+    return render_template("admin.html", dados=dados)
+
+
 # Início da aplicação
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
+
 
