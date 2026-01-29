@@ -45,3 +45,56 @@
             height: 100%;
             text-align: center;
             user-select: none;
+        }
+
+        .btn:hover {
+            background-color: #ddd;
+        }
+
+        .label {
+            font-size: 2rem; /* Texto abaixo do emoji */
+            margin-top: 10px;
+        }
+
+        .muito-satisfeito { background-color: #4CAF50; color: white; }
+        .satisfeito { background-color: #FFC107; color: white; }
+        .insatisfeito { background-color: #F44336; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="btn muito-satisfeito" onclick="registar('Muito Satisfeito')">
+            😄
+            <div class="label">Muito Satisfeito</div>
+        </div>
+        <div class="btn satisfeito" onclick="registar('Satisfeito')">
+            🙂
+            <div class="label">Satisfeito</div>
+        </div>
+        <div class="btn insatisfeito" onclick="registar('Insatisfeito')">
+            😟
+            <div class="label">Insatisfeito</div>
+        </div>
+    </div>
+
+    <script>
+        async function registar(nivel) {
+            try {
+                const response = await fetch('/registar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nivel: nivel })
+                });
+
+                const data = await response.json();
+                if (data.estado === 'ok') {
+                    alert('Obrigado pela sua opinião!');
+                }
+            } catch (err) {
+                alert('Erro ao registar a opinião.');
+                console.error(err);
+            }
+        }
+    </script>
+</body>
+</html>
