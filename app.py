@@ -6,7 +6,7 @@ import os
 
 app = Flask(__name__)
 
-# Função para ligar à base de dados
+# Função para ligar à base de dados SQLite
 def ligar_bd():
     conn = sqlite3.connect("satisfacao.db")
     cursor = conn.cursor()
@@ -65,3 +65,4 @@ def exportar_txt():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
+
