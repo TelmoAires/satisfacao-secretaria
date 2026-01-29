@@ -47,7 +47,7 @@ def exportar_txt():
 
 
 @app.route("/admin")
-    def admin():
+def admin():
     conn = sqlite3.connect("satisfacao.db")
     cursor = conn.cursor()
     cursor.execute("""
@@ -66,6 +66,7 @@ def exportar_txt():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
+
 
 
 
