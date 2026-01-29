@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Satisfação na Secretaria</title>
     <style>
-        /* Reset básico */
         * {
             margin: 0;
             padding: 0;
@@ -17,28 +16,27 @@
             font-family: Arial, sans-serif;
         }
 
-        /* Container principal */
         .container {
             display: grid;
-            grid-template-columns: repeat(1, 1fr);
+            grid-template-columns: 1fr;
             grid-template-rows: repeat(3, 1fr);
-            height: 100vh; /* Ocupa 100% do ecrã */
+            height: 100vh;
             width: 100vw;
         }
 
         @media (min-width: 600px) {
             .container {
                 grid-template-columns: repeat(3, 1fr);
-                grid-template-rows: repeat(1, 1fr);
+                grid-template-rows: 1fr;
             }
         }
 
-        /* Botões grandes */
         .btn {
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            font-size: 2.5rem; /* Texto maior */
+            font-size: 5rem; /* Emojis bem grandes */
             cursor: pointer;
             transition: background 0.2s;
             border: 1px solid #ccc;
@@ -47,43 +45,3 @@
             height: 100%;
             text-align: center;
             user-select: none;
-        }
-
-        .btn:hover {
-            background-color: #ddd;
-        }
-
-        /* Cores para cada satisfação */
-        .muito-satisfeito { background-color: #4CAF50; color: white; }
-        .satisfeito { background-color: #FFC107; color: white; }
-        .insatisfeito { background-color: #F44336; color: white; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="btn muito-satisfeito" onclick="registar('Muito Satisfeito')">😄 Muito Satisfeito</div>
-        <div class="btn satisfeito" onclick="registar('Satisfeito')">🙂 Satisfeito</div>
-        <div class="btn insatisfeito" onclick="registar('Insatisfeito')">😟 Insatisfeito</div>
-    </div>
-
-    <script>
-        async function registar(nivel) {
-            try {
-                const response = await fetch('/registar', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ nivel: nivel })
-                });
-
-                const data = await response.json();
-                if (data.estado === 'ok') {
-                    alert('Obrigado pela sua opinião!');
-                }
-            } catch (err) {
-                alert('Erro ao registar a opinião.');
-                console.error(err);
-            }
-        }
-    </script>
-</body>
-</html>
