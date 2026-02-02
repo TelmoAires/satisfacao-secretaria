@@ -1,33 +1,79 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Satisfação Secretaria</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta charset="UTF-8">
+    <title>Satisfação</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+        }
+
+        h1 {
+            margin-bottom: 30px;
+        }
+
+        .botoes {
+            display: flex;
+            gap: 40px;
+        }
+
+        button {
+            font-size: 120px;
+            background: white;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        button:active {
+            transform: scale(0.9);
+        }
+
+        #msg {
+            margin-top: 40px;
+            font-size: 28px;
+            color: green;
+            display: none;
+        }
+    </style>
 </head>
 <body>
-<div class="container">
-    <button class="botao" onclick="clicar('Muito Satisfeito')">😄</button>
-    <button class="botao" onclick="clicar('Satisfeito')">🙂</button>
-    <button class="botao" onclick="clicar('Insatisfeito')">😟</button>
+
+<h1>Como avalia o atendimento?</h1>
+
+<div class="botoes">
+    <button onclick="enviar('Muito Satisfeito')">😄</button>
+    <button onclick="enviar('Satisfeito')">🙂</button>
+    <button onclick="enviar('Insatisfeito')">🙁</button>
 </div>
-<div id="mensagem"></div>
+
+<div id="msg">Obrigado pela sua opinião!</div>
 
 <script>
-function clicar(nivel){
+function enviar(nivel) {
     fetch("/registar", {
         method: "POST",
-        headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({nivel:nivel})
-    })
-    .then(res => res.json())
-    .then(data => {
-        const msg = document.getElementById("mensagem");
-        msg.innerText = "Obrigado pela sua opinião!";
-        setTimeout(() => { msg.innerText = ""; }, 2000);
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nivel: nivel })
     });
+
+    const msg = document.getElementById("msg");
+    msg.style.display = "block";
+
+    setTimeout(() => {
+        msg.style.display = "none";
+    }, 2000);
 }
 </script>
+
 </body>
 </html>
