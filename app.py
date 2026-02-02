@@ -6,34 +6,16 @@ import pandas as pd
 import csv
 
 # =========================
-# TESTE DE LIGAÇÃO AO SUPABASE (temporário)
-# =========================
-try:
-    conn = psycopg2.connect(
-        host=os.environ["DB_HOST"],
-        database=os.environ["DB_NAME"],
-        user=os.environ["DB_USER"],
-        password=os.environ["DB_PASSWORD"],
-        port=os.environ.get("DB_PORT", 5432),
-        sslmode="require"
-        
-    )
-    print("Ligação ao Supabase OK ✅")
-    conn.close()
-except Exception as e:
-    print("Erro ao ligar à BD:", e)
-
-# =========================
-# Função para ligar à BD
+# Função para ligar à Supabase
 # =========================
 def ligar_bd():
     return psycopg2.connect(
-        host=os.environ["DB_HOST"],
-        database=os.environ["DB_NAME"],
-        user=os.environ["DB_USER"],
+        host=os.environ["DB_HOST"],        # Endpoint Supabase
+        database=os.environ["DB_NAME"],    # Normalmente 'postgres'
+        user=os.environ["DB_USER"],        # Normalmente 'postgres'
         password=os.environ["DB_PASSWORD"],
         port=os.environ.get("DB_PORT", 5432),
-        sslmode="require"
+        sslmode="require"                  # obrigatório para Supabase
     )
 
 # =========================
@@ -122,7 +104,3 @@ def admin():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
-
-
-
-
