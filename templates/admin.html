@@ -1,112 +1,41 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-    <meta charset="UTF-8">
-    <title>Administração – Satisfação</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-        }
-
-        h1, h2 {
-            text-align: center;
-        }
-
-        .totais {
-            display: flex;
-            justify-content: space-around;
-            margin: 30px 0;
-            text-align: center;
-        }
-
-        .box {
-            padding: 20px;
-            border-radius: 10px;
-            width: 30%;
-            color: white;
-            font-size: 1.5rem;
-        }
-
-        .verde { background-color: #4CAF50; }
-        .amarelo { background-color: #FFC107; }
-        .vermelho { background-color: #F44336; }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 30px;
-        }
-
-        th, td {
-            border: 1px solid #ccc;
-            padding: 8px;
-            text-align: center;
-        }
-
-        th {
-            background-color: #f0f0f0;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin - Satisfação</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
+<h1>Histórico de respostas</h1>
 
-<h1>📊 Satisfação – Área de Administração</h1>
-
-<h2>Totais</h2>
-<div class="totais">
-    <div class="box verde">😄<br>Muito Satisfeito<br><strong>{{ totais["Muito Satisfeito"] }}</strong></div>
-    <div class="box amarelo">🙂<br>Satisfeito<br><strong>{{ totais["Satisfeito"] }}</strong></div>
-    <div class="box vermelho">😟<br>Insatisfeito<br><strong>{{ totais["Insatisfeito"] }}</strong></div>
-</div>
-
-<h2>Gráfico</h2>
-<canvas id="grafico" height="120"></canvas>
-
-<h2>Histórico</h2>
-<table>
-    <tr>
-        <th>Satisfação</th>
-        <th>Data e Hora</th>
-    </tr>
-    {% for nivel, data_hora in dados %}
-    <tr>
-        <td>{{ nivel }}</td>
-        <td>{{ data_hora }}</td>
-    </tr>
-    {% endfor %}
+<table border="1">
+<tr><th>Nível</th><th>Data/Hora</th></tr>
+{% for d in dados %}
+<tr>
+<td>{{ d[0] }}</td>
+<td>{{ d[1] }}</td>
+</tr>
+{% endfor %}
 </table>
 
-<script>
-const ctx = document.getElementById('grafico');
+<h2>Resumo</h2>
+<canvas id="grafico" width="400" height="200"></canvas>
 
-new Chart(ctx, {
+<script>
+var ctx = document.getElementById('grafico').getContext('2d');
+var chart = new Chart(ctx, {
     type: 'bar',
     data: {
-        labels: ['Muito Satisfeito', 'Satisfeito', 'Insatisfeito'],
+        labels: ["Muito Satisfeito", "Satisfeito", "Insatisfeito"],
         datasets: [{
-            data: [
-                {{ totais["Muito Satisfeito"] }},
-                {{ totais["Satisfeito"] }},
-                {{ totais["Insatisfeito"] }}
-            ]
+            label: 'Número de respostas',
+            data: [{{ totais['Muito Satisfeito'] }}, {{ totais['Satisfeito'] }}, {{ totais['Insatisfeito'] }}],
+            backgroundColor: ['#4caf50','#ffeb3b','#f44336']
         }]
     },
-    options: {
-        responsive: true,
-        plugins: {
-            legend: { display: false }
-        },
-        scales: {
-            y: { beginAtZero: true }
-        }
-    }
+    options: {responsive:true, maintainAspectRatio:false}
 });
 </script>
-
 </body>
 </html>
