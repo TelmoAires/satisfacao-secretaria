@@ -14,11 +14,11 @@ body, html {
     flex-direction:row;
     gap:20px;
     justify-content:center;
-    flex-wrap:wrap; /* para mobile */
+    flex-wrap:wrap; /* adapta a ecrãs pequenos */
 }
 
 .botao {
-    font-size: 150px; /* maior tamanho */
+    font-size: 150px; /* emojis grandes */
     padding: 40px;
     border:none;
     background:none;
@@ -28,7 +28,7 @@ body, html {
 #mensagem {
     font-size: 30px;
     margin-top: 20px;
-    height: 40px; /* para não “pular” layout */
+    height: 40px; /* evita salto de layout */
     color: #333;
     text-align:center;
 }
