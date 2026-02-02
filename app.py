@@ -6,11 +6,18 @@ import pandas as pd
 import csv
 
 try:
-    conn = ligar_bd()
+    conn = psycopg2.connect(
+        host=os.environ["DB_HOST"],
+        database=os.environ["DB_NAME"],
+        user=os.environ["DB_USER"],
+        password=os.environ["DB_PASSWORD"],
+        port=os.environ.get("DB_PORT", 5432)
+    )
     print("Ligação ao Supabase OK ✅")
     conn.close()
 except Exception as e:
     print("Erro ao ligar à BD:", e)
+
 
 
 
@@ -110,5 +117,6 @@ def admin():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
+
 
 
