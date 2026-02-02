@@ -20,11 +20,14 @@ function clicar(nivel){
         method: "POST",
         headers: {"Content-Type":"application/json"},
         body: JSON.stringify({nivel:nivel})
-    }).then(res=>res.json()).then(data=>{
-        document.getElementById("mensagem").innerText = "Obrigado pela sua opinião!";
-        setTimeout(()=>{document.getElementById("mensagem").innerText = ""}, 2000);
-    });
+    }).then(res => res.json())
+      .then(data => {
+          const msg = document.getElementById("mensagem");
+          msg.innerText = "Obrigado pela sua opinião!";
+          setTimeout(() => { msg.innerText = ""; }, 2000); // desaparece sozinho
+      });
 }
 </script>
 </body>
 </html>
+
