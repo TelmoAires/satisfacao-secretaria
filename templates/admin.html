@@ -1,41 +1,92 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin - Satisfação</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta charset="UTF-8">
+    <title>Administração</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background: #eee;
+        }
+
+        .grafico {
+            display: flex;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .barra {
+            width: 100px;
+            background: #4caf50;
+            color: white;
+            text-align: center;
+            padding-top: 10px;
+        }
+
+        .barra.insatisfeito {
+            background: #f44336;
+        }
+
+        .barra.satisfeito {
+            background: #ff9800;
+        }
+    </style>
 </head>
 <body>
-<h1>Histórico de respostas</h1>
 
-<table border="1">
-<tr><th>Nível</th><th>Data/Hora</th></tr>
-{% for d in dados %}
-<tr>
-<td>{{ d[0] }}</td>
-<td>{{ d[1] }}</td>
-</tr>
-{% endfor %}
+<h1>Área de Administração</h1>
+
+<p>
+    <a href="/exportar_excel">📊 Exportar Excel</a> |
+    <a href="/exportar_txt">📄 Exportar TXT</a>
+</p>
+
+<div class="grafico">
+    <div class="barra">
+        😄<br>{{ totais["Muito Satisfeito"] }}
+    </div>
+    <div class="barra satisfeito">
+        🙂<br>{{ totais["Satisfeito"] }}
+    </div>
+    <div class="barra insatisfeito">
+        🙁<br>{{ totais["Insatisfeito"] }}
+    </div>
+</div>
+
+<table>
+    <tr>
+        <th>Satisfação</th>
+        <th>Data / Hora</th>
+    </tr>
+    {% for d in dados %}
+    <tr>
+        <td>{{ d[0] }}</td>
+        <td>{{ d[1] }}</td>
+    </tr>
+    {% endfor %}
 </table>
 
-<h2>Resumo</h2>
-<canvas id="grafico" width="400" height="200"></canvas>
-
-<script>
-var ctx = document.getElementById('grafico').getContext('2d');
-var chart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: ["Muito Satisfeito", "Satisfeito", "Insatisfeito"],
-        datasets: [{
-            label: 'Número de respostas',
-            data: [{{ totais['Muito Satisfeito'] }}, {{ totais['Satisfeito'] }}, {{ totais['Insatisfeito'] }}],
-            backgroundColor: ['#4caf50','#ffeb3b','#f44336']
-        }]
-    },
-    options: {responsive:true, maintainAspectRatio:false}
-});
-</script>
 </body>
 </html>
