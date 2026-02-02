@@ -5,6 +5,16 @@ from datetime import datetime
 import pandas as pd
 import csv
 
+try:
+    conn = ligar_bd()
+    print("Ligação ao Supabase OK ✅")
+    conn.close()
+except Exception as e:
+    print("Erro ao ligar à BD:", e)
+
+
+
+
 app = Flask(__name__)
 
 # =========================
@@ -100,4 +110,5 @@ def admin():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
+
 
