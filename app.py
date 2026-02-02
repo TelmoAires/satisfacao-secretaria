@@ -1,33 +1,34 @@
 from flask import Flask, render_template, request, jsonify, send_file
-import sqlite3
-from datetime import datetime
 import os
+import psycopg2
+from datetime import datetime
+import pandas as pd
 import csv
 
 app = Flask(__name__)
 
-
+# =========================
+# Conexão com Supabase
+# =========================
 def ligar_bd():
-    conn = sqlite3.connect("satisfacao.db")
-    cursor = conn.cursor()
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS respostas (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            nivel TEXT,
-            data_hora TEXT
-        )
-    """)
-    conn.commit()
-    return conn
+    return psycopg2.connect(
+        host=os.environ["DB_HOST"],
+        database=os.environ["DB_NAME"],
+        user=os.environ["DB_USER"],
+        password=os.environ["DB_PASSWORD"],
+        port=os.environ.get("DB_PORT", 5432)
+    )
 
-
+# =========================
 # Página principal
+# =========================
 @app.route("/")
 def index():
     return render_template("index.html")
 
-
-# Registar clique
+# =========================
+# Registo de cliques
+# =========================
 @app.route("/registar", methods=["POST"])
 def registar():
     dados = request.get_json()
@@ -37,7 +38,7 @@ def registar():
     conn = ligar_bd()
     cursor = conn.cursor()
     cursor.execute(
-        "INSERT INTO respostas (nivel, data_hora) VALUES (?, ?)",
+        "INSERT INTO respostas (nivel, data_hora) VALUES (%s, %s)",
         (nivel, data_hora)
     )
     conn.commit()
@@ -45,53 +46,25 @@ def registar():
 
     return jsonify({"estado": "ok"})
 
-
-# Área de administração
-@app.route("/admin")
-def admin():
+# =========================
+# Exportar Excel
+# =========================
+@app.route("/exportar_excel")
+def exportar_excel():
     conn = ligar_bd()
-    cursor = conn.cursor()
-
-    # Histórico
-    cursor.execute("""
-        SELECT nivel, data_hora
-        FROM respostas
-        ORDER BY data_hora DESC
-    """)
-    dados = cursor.fetchall()
-
-    # Totais por tipo
-    cursor.execute("""
-        SELECT nivel, COUNT(*)
-        FROM respostas
-        GROUP BY nivel
-    """)
-    totais_raw = cursor.fetchall()
+    df = pd.read_sql_query("SELECT * FROM respostas", conn)
     conn.close()
+    df.to_excel("cliques.xlsx", index=False)
+    return send_file("cliques.xlsx", as_attachment=True)
 
-    # Converter para dicionário
-    totais = {
-        "Muito Satisfeito": 0,
-        "Satisfeito": 0,
-        "Insatisfeito": 0
-    }
-
-    for nivel, total in totais_raw:
-        totais[nivel] = total
-
-    return render_template(
-        "admin.html",
-        dados=dados,
-        totais=totais
-    )
-
-
+# =========================
 # Exportar TXT
+# =========================
 @app.route("/exportar_txt")
 def exportar_txt():
     conn = ligar_bd()
     cursor = conn.cursor()
-    cursor.execute("SELECT nivel, data_hora FROM respostas")
+    cursor.execute("SELECT nivel, data_hora FROM respostas ORDER BY data_hora DESC")
     dados = cursor.fetchall()
     conn.close()
 
@@ -102,25 +75,28 @@ def exportar_txt():
 
     return send_file("cliques.txt", as_attachment=True)
 
-
-# Exportar CSV (abre no Excel)
-@app.route("/exportar_excel")
-def exportar_excel():
+# =========================
+# Área admin
+# =========================
+@app.route("/admin")
+def admin():
     conn = ligar_bd()
     cursor = conn.cursor()
-    cursor.execute("SELECT nivel, data_hora FROM respostas")
+    cursor.execute("SELECT nivel, data_hora FROM respostas ORDER BY data_hora DESC")
     dados = cursor.fetchall()
     conn.close()
 
-    with open("cliques.csv", "w", newline="", encoding="utf-8") as f:
-        writer = csv.writer(f)
-        writer.writerow(["Nivel", "DataHora"])
-        writer.writerows(dados)
+    # Contagens simples para gráfico
+    totais = {"Muito Satisfeito":0, "Satisfeito":0, "Insatisfeito":0}
+    for d in dados:
+        if d[0] in totais:
+            totais[d[0]] += 1
 
-    return send_file("cliques.csv", as_attachment=True)
+    return render_template("admin.html", dados=dados, totais=totais)
 
-
+# =========================
+# Run
+# =========================
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
-
