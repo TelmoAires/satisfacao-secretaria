@@ -13,12 +13,22 @@ body, html {
     display:flex;
     flex-direction:row;
     gap:20px;
+    justify-content:center;
+    flex-wrap:wrap; /* para mobile */
 }
 
 .botao {
-    font-size:100px;
-    padding:20px;
+    font-size: 150px; /* maior tamanho */
+    padding: 40px;
     border:none;
     background:none;
     cursor:pointer;
+}
+
+#mensagem {
+    font-size: 30px;
+    margin-top: 20px;
+    height: 40px; /* para não “pular” layout */
+    color: #333;
+    text-align:center;
 }
