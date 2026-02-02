@@ -1,126 +1,30 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Satisfação na Secretaria</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html, body {
-            height: 100%;
-            font-family: Arial, sans-serif;
-        }
-
-        .container {
-            display: grid;
-            grid-template-columns: 1fr;
-            grid-template-rows: repeat(3, 1fr);
-            height: 100vh;
-            width: 100vw;
-        }
-
-        @media (min-width: 600px) {
-            .container {
-                grid-template-columns: repeat(3, 1fr);
-                grid-template-rows: 1fr;
-            }
-        }
-
-        .btn {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            font-size: 8rem; /* Emojis grandes */
-            cursor: pointer;
-            transition: background 0.2s;
-            border: 1px solid #ccc;
-            background-color: #f0f0f0;
-            width: 100%;
-            height: 100%;
-            text-align: center;
-            user-select: none;
-        }
-
-        .btn:hover {
-            background-color: #ddd;
-        }
-
-        .label {
-            font-size: 2.5rem;
-            margin-top: 10px;
-        }
-
-        .muito-satisfeito { background-color: #4CAF50; color: white; }
-        .satisfeito { background-color: #FFC107; color: white; }
-        .insatisfeito { background-color: #F44336; color: white; }
-
-        /* Mensagem temporária */
-        #mensagem {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0,0,0,0.7);
-            color: white;
-            padding: 15px 25px;
-            font-size: 1.5rem;
-            border-radius: 10px;
-            opacity: 0;
-            transition: opacity 0.5s;
-            pointer-events: none;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Satisfação Secretaria</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="container">
-        <div class="btn muito-satisfeito" onclick="registar('Muito Satisfeito')">
-            😄
-            <div class="label">Muito Satisfeito</div>
-        </div>
-        <div class="btn satisfeito" onclick="registar('Satisfeito')">
-            🙂
-            <div class="label">Satisfeito</div>
-        </div>
-        <div class="btn insatisfeito" onclick="registar('Insatisfeito')">
-            😟
-            <div class="label">Insatisfeito</div>
-        </div>
-    </div>
+<div class="container">
+    <button class="botao" onclick="clicar('Muito Satisfeito')">😄</button>
+    <button class="botao" onclick="clicar('Satisfeito')">🙂</button>
+    <button class="botao" onclick="clicar('Insatisfeito')">😟</button>
+</div>
+<div id="mensagem"></div>
 
-    <!-- Mensagem temporária -->
-    <div id="mensagem">Obrigado pela sua opinião!</div>
-
-    <script>
-        async function registar(nivel) {
-            try {
-                const response = await fetch('/registar', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ nivel: nivel })
-                });
-
-                const data = await response.json();
-                if (data.estado === 'ok') {
-                    mostrarMensagem();
-                }
-            } catch (err) {
-                console.error(err);
-            }
-        }
-
-        function mostrarMensagem() {
-            const msg = document.getElementById('mensagem');
-            msg.style.opacity = 1; // Mostra a mensagem
-            setTimeout(() => {
-                msg.style.opacity = 0; // Desaparece depois de 2 segundos
-            }, 2000);
-        }
-    </script>
+<script>
+function clicar(nivel){
+    fetch("/registar", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({nivel:nivel})
+    }).then(res=>res.json()).then(data=>{
+        document.getElementById("mensagem").innerText = "Obrigado pela sua opinião!";
+        setTimeout(()=>{document.getElementById("mensagem").innerText = ""}, 2000);
+    });
+}
+</script>
 </body>
 </html>
