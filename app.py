@@ -1,38 +1,43 @@
 from flask import Flask, render_template, request, jsonify, send_file
-import os
-import psycopg2
+import sqlite3
 from datetime import datetime
 import pandas as pd
 import csv
+import os
 
 # =========================
-# Função para ligar à Supabase
+# Função para ligar à BD SQLite
 # =========================
 def ligar_bd():
-    return psycopg2.connect(
-        host=os.environ["DB_HOST"],        # Endpoint Supabase
-        database=os.environ["DB_NAME"],    # Normalmente 'postgres'
-        user=os.environ["DB_USER"],        # Normalmente 'postgres'
-        password=os.environ["DB_PASSWORD"],
-        port=os.environ.get("DB_PORT", 5432),
-        sslmode="require"                  # obrigatório para Supabase
-    )
+    return sqlite3.connect("satisfacao.db")
+
+# =========================
+# Inicializa BD (uma vez)
+# =========================
+if not os.path.exists("satisfacao.db"):
+    conn = ligar_bd()
+    cursor = conn.cursor()
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS respostas (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nivel TEXT,
+            data_hora TEXT
+        )
+    """)
+    conn.commit()
+    conn.close()
 
 # =========================
 # Inicializa Flask
 # =========================
 app = Flask(__name__)
 
-# =========================
 # Página principal
-# =========================
 @app.route("/")
 def index():
     return render_template("index.html")
 
-# =========================
 # Registo de cliques
-# =========================
 @app.route("/registar", methods=["POST"])
 def registar():
     dados = request.get_json()
@@ -42,7 +47,7 @@ def registar():
     conn = ligar_bd()
     cursor = conn.cursor()
     cursor.execute(
-        "INSERT INTO respostas (nivel, data_hora) VALUES (%s, %s)",
+        "INSERT INTO respostas (nivel, data_hora) VALUES (?, ?)",
         (nivel, data_hora)
     )
     conn.commit()
@@ -50,9 +55,7 @@ def registar():
 
     return jsonify({"estado": "ok"})
 
-# =========================
 # Exportar Excel
-# =========================
 @app.route("/exportar_excel")
 def exportar_excel():
     conn = ligar_bd()
@@ -61,9 +64,7 @@ def exportar_excel():
     df.to_excel("cliques.xlsx", index=False)
     return send_file("cliques.xlsx", as_attachment=True)
 
-# =========================
 # Exportar TXT
-# =========================
 @app.route("/exportar_txt")
 def exportar_txt():
     conn = ligar_bd()
@@ -79,9 +80,7 @@ def exportar_txt():
 
     return send_file("cliques.txt", as_attachment=True)
 
-# =========================
 # Área admin
-# =========================
 @app.route("/admin")
 def admin():
     conn = ligar_bd()
@@ -98,9 +97,7 @@ def admin():
 
     return render_template("admin.html", dados=dados, totais=totais)
 
-# =========================
 # Run
-# =========================
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
