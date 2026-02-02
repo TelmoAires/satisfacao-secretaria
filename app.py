@@ -86,7 +86,7 @@ def admin():
     dados = cursor.fetchall()
     conn.close()
 
-    # Contagens simples para gráfico
+    # Totais para gráfico
     totais = {"Muito Satisfeito":0, "Satisfeito":0, "Insatisfeito":0}
     for d in dados:
         if d[0] in totais:
@@ -100,3 +100,4 @@ def admin():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
+
