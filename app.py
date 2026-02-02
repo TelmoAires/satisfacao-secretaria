@@ -14,7 +14,7 @@ try:
         database=os.environ["DB_NAME"],
         user=os.environ["DB_USER"],
         password=os.environ["DB_PASSWORD"],
-        port=os.environ.get("DB_PORT", 5432)
+        port=os.environ.get("DB_PORT", 5432),
         sslmode="require"
         
     )
@@ -32,7 +32,7 @@ def ligar_bd():
         database=os.environ["DB_NAME"],
         user=os.environ["DB_USER"],
         password=os.environ["DB_PASSWORD"],
-        port=os.environ.get("DB_PORT", 5432)
+        port=os.environ.get("DB_PORT", 5432),
         sslmode="require"
     )
 
@@ -122,6 +122,7 @@ def admin():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
+
 
 
 
