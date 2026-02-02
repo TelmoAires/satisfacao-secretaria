@@ -5,6 +5,9 @@ from datetime import datetime
 import pandas as pd
 import csv
 
+# =========================
+# TESTE DE LIGAÇÃO AO SUPABASE (temporário)
+# =========================
 try:
     conn = psycopg2.connect(
         host=os.environ["DB_HOST"],
@@ -18,14 +21,8 @@ try:
 except Exception as e:
     print("Erro ao ligar à BD:", e)
 
-
-
-
-
-app = Flask(__name__)
-
 # =========================
-# Conexão com Supabase
+# Função para ligar à BD
 # =========================
 def ligar_bd():
     return psycopg2.connect(
@@ -35,6 +32,11 @@ def ligar_bd():
         password=os.environ["DB_PASSWORD"],
         port=os.environ.get("DB_PORT", 5432)
     )
+
+# =========================
+# Inicializa Flask
+# =========================
+app = Flask(__name__)
 
 # =========================
 # Página principal
@@ -69,7 +71,7 @@ def registar():
 @app.route("/exportar_excel")
 def exportar_excel():
     conn = ligar_bd()
-    df = pd.read_sql_query("SELECT * FROM respostas", conn)
+    df = pd.read_sql_query("SELECT * FROM respostas ORDER BY data_hora DESC", conn)
     conn.close()
     df.to_excel("cliques.xlsx", index=False)
     return send_file("cliques.xlsx", as_attachment=True)
@@ -117,6 +119,3 @@ def admin():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
-
-
-
